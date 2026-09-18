@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《賣油翁》第一頁重點文言字詞配對遊戲</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts for Classical Chinese Aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Noto Serif TC', serif;
+      background-color: #f7f3e9;
+      background-image: radial-gradient(#e2d7be 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .font-calligraphy {
+      font-family: 'Ma Shan Zheng', cursive, 'Noto Serif TC', serif;
+    }
+    .card-flip-inner {
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card-flipped .card-flip-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      backface-visibility: hidden;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(217, 119, 6, 0); }
+    }
+    .pulse-glow {
+      animation: pulse-gold 2s infinite;
+    }
+    /* Custom scrollbar for game areas */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1e9d2;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #b45309;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-amber-950 flex flex-col justify-between selection:bg-amber-200">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-amber-900 text-amber-50 shadow-lg border-b-4 border-amber-700 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-amber-700 border-2 border-amber-300 flex items-center justify-center font-bold text-xl shadow-inner">
+          <i class="fa-solid font-calligraphy text-2xl">油</i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold tracking-wide font-calligraphy text-amber-100">《賣油翁》文言字詞預習配對</h1>
+          <p class="text-xs text-amber-200 opacity-90 hidden sm:block">中一級中國語文科 • 課前預習工作紙第 1 頁</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="soundToggleBtn" onclick="toggleSound()" class="p-2 px-3 rounded-lg bg-amber-800 hover:bg-amber-700 border border-amber-600 text-amber-100 text-sm transition">
+          <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+        </button>
+        <button onclick="showHelpModal()" class="p-2 px-3 rounded-lg bg-amber-800 hover:bg-amber-700 border border-amber-600 text-amber-100 text-sm transition flex items-center gap-1">
+          <i class="fa-solid fa-circle-question"></i> <span class="hidden sm:inline">遊戲說明</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Container -->
+  <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-grow flex flex-col">
+    
+    <!-- -->
+    <!-- Mode & Level Selector Card -->
+    <div class="bg-amber-100/80 backdrop-blur border-2 border-amber-300 rounded-2xl p-4 md:p-6 mb-6 shadow-md">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+
+        <!-- Word Group Filter -->
+        <div>
+          <label class="block text-xs font-bold text-amber-800 mb-1 uppercase tracking-wider">選擇學習字詞範圍</label>
+          <select id="categorySelect" onchange="changeCategory()" class="w-full p-2.5 rounded-xl bg-amber-50 border-2 border-amber-300 font-bold text-amber-900 focus:outline-none focus:border-amber-600">
+            <option value="all">全卷 25 個重點字詞（綜合大挑戰）</option>
+            <option value="verbs">第一組：動作與具體名詞 (釋, 擔, 置, 覆, 杓, 瀝, 遣...)</option>
+            <option value="attitudes">第二組：神態、品質與程度 (善, 自矜, 睨, 頷, 精, 忿然...)</option>
+            <option value="grammar">第三組：代詞、虛詞與副詞 (嘗, 但, 汝, 爾, 安, 徐...)</option>
+          </select>
+        </div>
+
+        <!-- Game Stats / Actions -->
+        <div class="flex items-center justify-between md:justify-end space-x-4 pt-2 md:pt-0 border-t md:border-t-0 border-amber-200">
+          <div class="text-center px-3 border-r border-amber-300">
+            <span class="text-xs text-amber-700 block font-bold">目前得分</span>
+            <span id="scoreText" class="text-2xl font-black text-amber-900">0</span>
+          </div>
+          <button onclick="restartGame()" class="px-4 py-2.5 bg-gradient-to-r from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> 重新開始
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classic Click Match Board -->
+    <div id="matchBoard" class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+      
+      <!-- Classical Chinese Words Column -->
+      <div class="bg-amber-50/90 border-2 border-amber-200 rounded-2xl p-4 shadow-sm flex flex-col">
+        <h3 class="text-lg font-bold text-amber-900 border-b-2 border-amber-200 pb-2 mb-3 flex items-center justify-between">
+          <span><i class="fa-solid fa-scroll text-amber-700 mr-2"></i>文言字詞（點擊選擇）</span>
+          <span class="text-xs font-normal text-amber-700 bg-amber-200/60 px-2 py-0.5 rounded-full">原文</span>
+        </h3>
+        <div id="ancientList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow overflow-y-auto max-h-[500px] p-1">
+          <!-- Dynamic cards injected here -->
+        </div>
+      </div>
+
+      <!-- Modern Translation Meanings Column -->
+      <div class="bg-amber-50/90 border-2 border-amber-200 rounded-2xl p-4 shadow-sm flex flex-col">
+        <h3 class="text-lg font-bold text-amber-900 border-b-2 border-amber-200 pb-2 mb-3 flex items-center justify-between">
+          <span><i class="fa-solid fa-language text-amber-700 mr-2"></i>現代語譯字義（點擊配對）</span>
+          <span class="text-xs font-normal text-amber-700 bg-amber-200/60 px-2 py-0.5 rounded-full">解釋</span>
+        </h3>
+        <div id="modernList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow overflow-y-auto max-h-[500px] p-1">
+          <!-- Dynamic cards injected here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Context & Sentence Hint Bar -->
+    <div id="hintBox" class="mt-6 bg-amber-900 text-amber-100 rounded-2xl p-4 border-2 border-amber-700 shadow-lg transition-all duration-300">
+      <div class="flex items-start gap-3">
+        <div class="p-2 rounded-xl bg-amber-800 text-amber-300 text-xl flex-shrink-0">
+          <i class="fa-solid fa-quote-left"></i>
+        </div>
+        <div class="flex-grow">
+          <h4 class="text-xs uppercase tracking-wider text-amber-300 font-bold mb-0.5">語譯工作紙對應例句與提示</h4>
+          <p id="hintSentence" class="text-base sm:text-lg font-medium leading-relaxed">請點擊上方任意文言字詞以查看課文例句提示！</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Victory / Results Modal -->
+  <div id="resultModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-amber-50 border-4 border-amber-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl transform transition-all text-center relative overflow-hidden">
+      <!-- Decorative background icon -->
+      <i class="fa-solid fa-trophy absolute -right-6 -bottom-6 text-9xl text-amber-200/50 pointer-events-none"></i>
+
+      <div class="w-20 h-20 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border-4 border-amber-600 shadow-inner">
+        <i class="fa-solid fa-award"></i>
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-black text-amber-950 font-calligraphy mb-1">大功告成！預習完成！</h2>
+      <p class="text-amber-800 text-sm mb-6">你已順利掌握《賣油翁》第一頁重點文言字詞！</p>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 gap-3 bg-amber-100 p-4 rounded-2xl border border-amber-300 mb-6 text-center">
+        <div>
+          <span class="text-xs font-bold text-amber-700 block">總得分</span>
+          <span id="finalScore" class="text-2xl font-black text-amber-900">0</span>
+        </div>
+        <div>
+          <span class="text-xs font-bold text-amber-700 block">準確率</span>
+          <span id="finalAccuracy" class="text-2xl font-black text-amber-900">100%</span>
+        </div>
+      </div>
+
+      <!-- Button Controls -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="restartGame(); closeModal('resultModal');" class="flex-1 py-3 px-4 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-xl shadow-md transition">
+          <i class="fa-solid fa-rotate-right mr-1"></i> 再挑戰一次
+        </button>
+        <button onclick="reviewMistakes();" id="reviewBtn" class="flex-1 py-3 px-4 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-xl border border-amber-400 transition">
+          <i class="fa-solid fa-book-open mr-1"></i> 溫習字詞清單
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Word List / Review Modal -->
+  <div id="reviewModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-amber-50 border-4 border-amber-700 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl p-6">
+      <div class="flex justify-between items-center border-b-2 border-amber-200 pb-3 mb-4">
+        <h3 class="text-xl font-bold text-amber-900 font-calligraphy flex items-center gap-2">
+          <i class="fa-solid fa-book-bookmark text-amber-700"></i> 《賣油翁》第一頁字詞對照表
+        </h3>
+        <button onclick="closeModal('reviewModal')" class="text-amber-800 hover:text-amber-950 text-2xl font-bold px-2">&times;</button>
+      </div>
+      <div class="overflow-y-auto flex-grow space-y-3 pr-2" id="reviewListContainer">
+        <!-- Injected list of all 25 words -->
+      </div>
+      <div class="mt-4 pt-3 border-t border-amber-200 text-right">
+        <button onclick="closeModal('reviewModal')" class="py-2.5 px-6 bg-amber-800 hover:bg-amber-900 text-amber-50 font-bold rounded-xl shadow">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help / Instructions Modal -->
+  <div id="helpModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-amber-50 border-4 border-amber-700 rounded-3xl max-w-lg w-full p-6 shadow-2xl">
+      <h3 class="text-xl font-bold text-amber-900 font-calligraphy mb-3 border-b-2 border-amber-200 pb-2">
+        <i class="fa-solid fa-circle-info text-amber-700 mr-1"></i> 預習配對遊戲玩法
+      </h3>
+      <ul class="space-y-3 text-sm text-amber-900 mb-6">
+        <li class="flex items-start gap-2">
+          <i class="fa-solid fa-hand-pointer text-amber-700 mt-1"></i>
+          <span><b>點擊連線配對：</b>先點擊左側的「文言字詞」，再點擊右側對應的「現代漢語字義」。答對即可消去，答錯會提示例句。</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fa-solid fa-lightbulb text-amber-700 mt-1"></i>
+          <span><b>例句提示：</b>選取文言字詞時，底部會即時顯示《賣油翁》課文中包含該字詞的句子，方便結合語境記憶。</span>
+        </li>
+      </ul>
+      <button onclick="closeModal('helpModal')" class="w-full py-2.5 bg-amber-800 hover:bg-amber-900 text-amber-50 font-bold rounded-xl shadow">
+        我知道了，開始練習！
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-amber-950 text-amber-300/80 text-center text-xs py-3 border-t border-amber-800">
+    《賣油翁》(歐陽修) 課前文言字詞配對預習 • 德望學校中國語文科 (中一級)
+  </footer>
+
+  <script>
+    // 25 Core Vocabulary items from Worksheet Page 1
+    const VOCAB_DATA = [
+      { id: 1, ancient: "善", modern: "擅長", sentence: "陳康肅公堯咨善射", cat: "attitudes" },
+      { id: 2, ancient: "無雙", modern: "獨一無二", sentence: "當世無雙", cat: "attitudes" },
+      { id: 3, ancient: "自矜", modern: "自我誇耀（自負）", sentence: "公亦以此自矜", cat: "attitudes" },
+      { id: 4, ancient: "嘗", modern: "曾經", sentence: "嘗射於家圃", cat: "grammar" },
+      { id: 5, ancient: "釋", modern: "放下", sentence: "釋擔而立", cat: "verbs" },
+      { id: 6, ancient: "擔", modern: "擔子", sentence: "釋擔而立", cat: "verbs" },
+      { id: 7, ancient: "睨", modern: "斜著眼睛看（滿不在乎）", sentence: "睨之，久而不去", cat: "attitudes" },
+      { id: 8, ancient: "發矢", modern: "發箭", sentence: "見其發矢十中八九", cat: "verbs" },
+      { id: 9, ancient: "但", modern: "只是 / 只不過", sentence: "但微頷之", cat: "grammar" },
+      { id: 10, ancient: "頷", modern: "點頭（表示讚許）", sentence: "但微頷之", cat: "attitudes" },
+      { id: 11, ancient: "汝", modern: "你（第二人稱代詞）", sentence: "汝亦知射乎", cat: "grammar" },
+      { id: 12, ancient: "精", modern: "精湛", sentence: "吾射不亦精乎", cat: "attitudes" },
+      { id: 13, ancient: "無他", modern: "沒有甚麼奧妙", sentence: "無他，但手熟爾", cat: "grammar" },
+      { id: 14, ancient: "爾（助詞）", modern: "罷了 / 而已", sentence: "但手熟爾", cat: "grammar" },
+      { id: 15, ancient: "忿然", modern: "氣憤地", sentence: "康肅忿然曰", cat: "attitudes" },
+      { id: 16, ancient: "爾（代詞）", modern: "你", sentence: "爾安敢輕吾射", cat: "grammar" },
+      { id: 17, ancient: "安", modern: "怎麼", sentence: "爾安敢輕吾射", cat: "grammar" },
+      { id: 18, ancient: "輕", modern: "輕視", sentence: "爾安敢輕吾射", cat: "attitudes" },
+      { id: 19, ancient: "酌", modern: "斟 / 注入", sentence: "以我酌油知之", cat: "verbs" },
+      { id: 20, ancient: "置", modern: "放置 / 放", sentence: "乃取一葫蘆置於地", cat: "verbs" },
+      { id: 21, ancient: "覆", modern: "覆蓋", sentence: "以錢覆其口", cat: "verbs" },
+      { id: 22, ancient: "徐", modern: "慢慢地", sentence: "徐以杓酌油瀝之", cat: "grammar" },
+      { id: 23, ancient: "杓", modern: "勺子", sentence: "徐以杓酌油瀝之", cat: "verbs" },
+      { id: 24, ancient: "瀝", modern: "滴 / 一滴一滴注入", sentence: "徐以杓酌油瀝之", cat: "verbs" },
+      { id: 25, ancient: "遣", modern: "打發", sentence: "康肅笑而遣之", cat: "verbs" }
+    ];
+
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (icon) {
+        icon.className = soundEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+      }
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+
+        if (type === 'select') {
+          osc.frequency.setValueAtTime(440, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else if (type === 'victory') {
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        }
+      } catch (e) {
+        // Fallback for audio restrictions
+      }
+    }
+
+    // Game State Variables
+    let currentCategory = 'all';
+    let activeWords = [];
+    let selectedAncient = null; // { id, element }
+    let selectedModern = null;  // { id, element }
+    let score = 0;
+    let totalAttempts = 0;
+    let correctMatches = 0;
+
+    // Helper: Shuffle array
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function changeCategory() {
+      currentCategory = document.getElementById('categorySelect').value;
+      restartGame();
+    }
+
+    function restartGame() {
+      // Filter words based on selected category
+      if (currentCategory === 'all') {
+        activeWords = [...VOCAB_DATA];
+      } else {
+        activeWords = VOCAB_DATA.filter(w => w.cat === currentCategory);
+      }
+
+      // Reset score & state
+      score = 0;
+      totalAttempts = 0;
+      correctMatches = 0;
+      selectedAncient = null;
+      selectedModern = null;
+
+      document.getElementById('scoreText').innerText = score;
+      document.getElementById('hintSentence').innerText = "請點擊上方任意字詞以查看《賣油翁》課文例句！";
+
+      renderMatchBoard();
+    }
+
+    function renderMatchBoard() {
+      const ancientContainer = document.getElementById('ancientList');
+      const modernContainer = document.getElementById('modernList');
+
+      ancientContainer.innerHTML = '';
+      modernContainer.innerHTML = '';
+
+      const shuffledAncient = shuffle(activeWords);
+      const shuffledModern = shuffle(activeWords);
+
+      shuffledAncient.forEach(item => {
+        const btn = document.createElement('button');
+        btn.dataset.id = item.id;
+        btn.className = "w-full text-left p-3.5 bg-white border-2 border-amber-300 rounded-xl hover:border-amber-600 hover:bg-amber-100/70 transition shadow-sm font-bold text-amber-950 flex justify-between items-center group cursor-pointer";
+        btn.innerHTML = `
+          <span class="text-lg font-calligraphy text-amber-900 group-hover:scale-105 transition-transform">${item.ancient}</span>
+          <i class="fa-solid fa-chevron-right text-xs text-amber-400 group-hover:text-amber-700"></i>
+        `;
+        btn.onclick = () => selectAncientCard(btn, item);
+        ancientContainer.appendChild(btn);
+      });
+
+      shuffledModern.forEach(item => {
+        const btn = document.createElement('button');
+        btn.dataset.id = item.id;
+        btn.className = "w-full text-left p-3.5 bg-white border-2 border-amber-300 rounded-xl hover:border-amber-600 hover:bg-amber-100/70 transition shadow-sm font-bold text-amber-900 flex justify-between items-center group cursor-pointer";
+        btn.innerHTML = `
+          <span class="text-sm font-medium text-amber-950">${item.modern}</span>
+          <i class="fa-solid fa-circle-dot text-xs text-amber-300 group-hover:text-amber-600"></i>
+        `;
+        btn.onclick = () => selectModernCard(btn, item);
+        modernContainer.appendChild(btn);
+      });
+    }
+
+    function selectAncientCard(btn, item) {
+      playSound('select');
+      
+      // Update sentence hint
+      document.getElementById('hintSentence').innerHTML = `例句：<span class="font-bold text-amber-300">「${item.sentence}」</span>（《賣油翁》工作紙第一頁）`;
+
+      // Clear previous selection highlight on ancient side
+      if (selectedAncient) {
+        selectedAncient.element.classList.remove('border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+        selectedAncient.element.classList.add('bg-white', 'border-amber-300');
+      }
+
+      selectedAncient = { id: item.id, element: btn };
+      btn.classList.remove('bg-white', 'border-amber-300');
+      btn.classList.add('border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+
+      checkMatch();
+    }
+
+    function selectModernCard(btn, item) {
+      playSound('select');
+
+      // Clear previous selection highlight on modern side
+      if (selectedModern) {
+        selectedModern.element.classList.remove('border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+        selectedModern.element.classList.add('bg-white', 'border-amber-300');
+      }
+
+      selectedModern = { id: item.id, element: btn };
+      btn.classList.remove('bg-white', 'border-amber-300');
+      btn.classList.add('border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (!selectedAncient || !selectedModern) return;
+
+      totalAttempts++;
+
+      if (selectedAncient.id === selectedModern.id) {
+        // Correct Match!
+        playSound('correct');
+        score += 10;
+        correctMatches++;
+        document.getElementById('scoreText').innerText = score;
+
+        const aEl = selectedAncient.element;
+        const mEl = selectedModern.element;
+
+        aEl.className = "w-full text-left p-3.5 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-xl font-bold flex justify-between items-center opacity-70 pointer-events-none transition-all scale-95";
+        aEl.innerHTML = `<span class="font-calligraphy text-lg">${aEl.innerText.trim()}</span> <i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+
+        mEl.className = "w-full text-left p-3.5 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-xl font-bold flex justify-between items-center opacity-70 pointer-events-none transition-all scale-95";
+        mEl.innerHTML = `<span class="text-sm font-medium">${mEl.innerText.trim()}</span> <i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+
+        selectedAncient = null;
+        selectedModern = null;
+
+        if (correctMatches === activeWords.length) {
+          setTimeout(triggerVictory, 500);
+        }
+
+      } else {
+        // Wrong Match
+        playSound('wrong');
+        const aEl = selectedAncient.element;
+        const mEl = selectedModern.element;
+
+        aEl.classList.add('bg-rose-200', 'border-rose-500', 'animate-shake');
+        mEl.classList.add('bg-rose-200', 'border-rose-500', 'animate-shake');
+
+        setTimeout(() => {
+          aEl.classList.remove('bg-rose-200', 'border-rose-500', 'border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+          mEl.classList.remove('bg-rose-200', 'border-rose-500', 'border-amber-700', 'bg-amber-200', 'ring-2', 'ring-amber-500');
+          aEl.classList.add('bg-white', 'border-amber-300');
+          mEl.classList.add('bg-white', 'border-amber-300');
+        }, 500);
+
+        selectedAncient = null;
+        selectedModern = null;
+      }
+    }
+
+    function renderMemoryBoard() {
+      const grid = document.getElementById('memoryGrid');
+      grid.innerHTML = '';
+
+      // Take a subset if array is too large for memory grid
+      const subset = activeWords.length > 12 ? shuffle(activeWords).slice(0, 12) : activeWords;
+      document.getElementById('memoryMatchedCount').innerText = `已配對: 0 / ${subset.length}`;
+
+      let cards = [];
+      subset.forEach(item => {
+        cards.push({ id: item.id, text: item.ancient, type: 'ancient', full: item });
+        cards.push({ id: item.id, text: item.modern, type: 'modern', full: item });
+      });
+
+      cards = shuffle(cards);
+
+      cards.forEach((card, index) => {
+        const cardElem = document.createElement('div');
+        cardElem.className = "h-28 rounded-2xl cursor-pointer perspective relative card-item";
+        cardElem.dataset.id = card.id;
+        cardElem.dataset.type = card.type;
+
+        cardElem.innerHTML = `
+          <div class="card-flip-inner w-full h-full relative rounded-2xl border-2 border-amber-400 bg-amber-800 shadow-md transition-transform duration-500">
+            <!-- Front of card (Hidden state) -->
+            <div class="card-front absolute inset-0 w-full h-full bg-amber-800 rounded-2xl flex flex-col items-center justify-center text-amber-200 border-2 border-amber-600">
+              <i class="fa-solid fa-scroll text-2xl mb-1 opacity-80"></i>
+              <span class="text-xs font-bold font-calligraphy">賣油翁</span>
+            </div>
+            <!-- Back of card (Revealed state) -->
+            <div class="card-back absolute inset-0 w-full h-full bg-amber-50 rounded-2xl border-2 border-amber-600 p-2 flex flex-col items-center justify-center text-center shadow-inner">
+              <span class="${card.type === 'ancient' ? 'font-calligraphy text-2xl text-amber-900 font-bold' : 'text-xs font-bold text-amber-950'}">${card.text}</span>
+            </div>
+          </div>
+        `;
+
+        cardElem.onclick = () => flipMemoryCard(cardElem, card);
+        grid.appendChild(cardElem);
+      });
+    }
+
+    function flipMemoryCard(cardElem, cardData) {
+      if (memoryLock) return;
+      if (cardElem.classList.contains('card-flipped')) return;
+
+      playSound('select');
+      cardElem.classList.add('card-flipped');
+      memoryFlippedCards.push({ elem: cardElem, data: cardData });
+
+      // Update sentence hint
+      document.getElementById('hintSentence').innerHTML = `例句：<span class="font-bold text-amber-300">「${cardData.full.sentence}」</span>`;
+
+      if (memoryFlippedCards.length === 2) {
+        memoryLock = true;
+        totalAttempts++;
+
+        const [card1, card2] = memoryFlippedCards;
+
+        if (card1.data.id === card2.data.id && card1.data.type !== card2.data.type) {
+          // Correct Memory Pair
+          playSound('correct');
+          score += 15;
+          correctMatches++;
+          document.getElementById('scoreText').innerText = score;
+
+          const totalPairs = document.querySelectorAll('#memoryGrid .card-item').length / 2;
+          document.getElementById('memoryMatchedCount').innerText = `已配對: ${correctMatches} / ${totalPairs}`;
+
+          setTimeout(() => {
+            card1.elem.classList.add('opacity-40', 'pointer-events-none');
+            card2.elem.classList.add('opacity-40', 'pointer-events-none');
+            memoryFlippedCards = [];
+            memoryLock = false;
+
+            if (correctMatches === totalPairs) {
+              setTimeout(triggerVictory, 500);
+            }
+          }, 600);
+
+        } else {
+          // Wrong Memory Pair
+          playSound('wrong');
+          setTimeout(() => {
+            card1.elem.classList.remove('card-flipped');
+            card2.elem.classList.remove('card-flipped');
+            memoryFlippedCards = [];
+            memoryLock = false;
+          }, 1000);
+        }
+      }
+    }
+
+    function triggerVictory() {
+      playSound('victory');
+
+      const accuracy = totalAttempts > 0 ? Math.round((correctMatches / totalAttempts) * 100) : 100;
+
+      document.getElementById('finalScore').innerText = score;
+      document.getElementById('finalAccuracy').innerText = `${accuracy}%`;
+
+      document.getElementById('resultModal').classList.remove('hidden');
+    }
+
+    function reviewMistakes() {
+      closeModal('resultModal');
+      const container = document.getElementById('reviewListContainer');
+      container.innerHTML = '';
+
+      VOCAB_DATA.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = "bg-amber-100/70 border border-amber-300 p-3 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-2";
+        row.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <span class="w-7 h-7 rounded-full bg-amber-800 text-amber-100 text-xs flex items-center justify-center font-bold">${index + 1}</span>
+            <div>
+              <span class="font-calligraphy text-xl font-bold text-amber-950 mr-2">${item.ancient}</span>
+              <span class="text-sm font-bold text-amber-800">： ${item.modern}</span>
+            </div>
+          </div>
+          <div class="text-xs text-amber-900 bg-amber-200/60 px-3 py-1 rounded-lg">
+            例句：<span class="italic font-serif">「${item.sentence}」</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    function showHelpModal() {
+      document.getElementById('helpModal').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Initialize game on window load
+    window.onload = function() {
+      restartGame();
+    };
+  </script>
+</body>
+</html>
